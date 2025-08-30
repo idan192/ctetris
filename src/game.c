@@ -151,8 +151,8 @@ size_t *TetrominoWell_coords(Tetromino const *const t) {
   size_t *coords = _Tetromino_rotated_coords(t);
 
   for (size_t i = 0; i < MINO_COORDS_SIZE; i += 2) {
-    coords[i] = t->row0 + t->mino_shift[i];
-    coords[i + 1] = t->col0 + t->mino_shift[i + 1];
+    coords[i] = t->row0 + coords[i] + t->mino_shift[i];
+    coords[i + 1] = t->col0 + coords[i + 1] + t->mino_shift[i + 1];
   }
 
   return coords;
