@@ -45,12 +45,23 @@ SDL_AppResult SDL_AppInit(void **UNUSED(appstate), int UNUSED(argc), char *UNUSE
 
   app = GameApp_init();
 
-  if (!SDL_CreateWindowAndRenderer(CMAKE_PROJECT_NAME, app->board->cols * BLOCK_SIZE_PIXELS,
-                                   app->board->rows * BLOCK_SIZE_PIXELS,
-                                   /* SDL_WINDOW_FULLSCREEN | SDL_WINDOW_BORDERLESS */ 0, &window, &renderer)) {
+  SDL_DisplayID display = SDL_GetPrimaryDisplay();
+  const SDL_DisplayMode *mode = SDL_GetCurrentDisplayMode(display);
+
+  int win_w = app->board->cols * BLOCK_SIZE_PIXELS;
+  int win_h = app->board->rows * BLOCK_SIZE_PIXELS;
+  if (mode) {
+    win_w = mode->w;
+    win_h = mode->h;
+  }
+
+  if (!SDL_CreateWindowAndRenderer(CMAKE_PROJECT_NAME, win_w, win_h, SDL_WINDOW_FULLSCREEN, &window, &renderer)) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Init window and renderer: %s", SDL_GetError());
     return SDL_APP_FAILURE;
   }
+
+  SDL_SetRenderLogicalPresentation(renderer, app->board->cols * BLOCK_SIZE_PIXELS,
+                                   app->board->rows * BLOCK_SIZE_PIXELS, SDL_LOGICAL_PRESENTATION_STRETCH);
 
   SpriteSheet_init(renderer, &tmp_sheet, "tetrominos.bmp");
   SpriteSheet_tetrominos(&tmp_sheet);
