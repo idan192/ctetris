@@ -9,6 +9,11 @@
 #include <SDL3/SDL_video.h>
 #include <stdio.h>
 
+// Base board dimensions used for asset scaling
+#define BOARD_COLS 10
+#define BOARD_ROWS 20
+#define BLOCK_SIZE_PIXELS 32
+
 static SDL_Window *window = NULL;
 static SDL_Renderer *renderer = NULL;
 
@@ -34,12 +39,18 @@ SDL_AppResult SDL_AppInit(void **UNUSED(appstate), int UNUSED(argc), char *UNUSE
 
   // TODO: initialize GameState
 
-  if (!SDL_CreateWindowAndRenderer(CMAKE_PROJECT_NAME, 100, 100,
-                                   /* SDL_WINDOW_FULLSCREEN | SDL_WINDOW_BORDERLESS, */
-                                   0, &window, &renderer)) {
+  if (!SDL_CreateWindowAndRenderer(CMAKE_PROJECT_NAME, 0, 0,
+                                   SDL_WINDOW_FULLSCREEN | SDL_WINDOW_BORDERLESS,
+                                   &window, &renderer)) {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Init window and renderer: %s", SDL_GetError());
     return SDL_APP_FAILURE;
   }
+
+  int win_w = 0, win_h = 0;
+  SDL_GetRendererOutputSize(renderer, &win_w, &win_h);
+  const float scale_x = (float)win_w / (BOARD_COLS * BLOCK_SIZE_PIXELS);
+  const float scale_y = (float)win_h / (BOARD_ROWS * BLOCK_SIZE_PIXELS);
+  SDL_SetRenderScale(renderer, scale_x, scale_y);
 
   return SDL_APP_CONTINUE;
 }
