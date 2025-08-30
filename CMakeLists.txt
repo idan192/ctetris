@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.31)
+cmake_minimum_required(VERSION 3.28)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Debug")
@@ -9,7 +9,6 @@ set(C_STANDARD_REQUIRED ON)
 set(PROJECT_NAME tetris)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(PROJECT_VERSION 1.0.0)
-set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_CLANG_FORMAT "clang-format -style=file")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -O0 -DDEBUG -Wall -Wextra -Wpedantic -fsanitize=address,undefined")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -DNDEBUG")
@@ -52,22 +51,22 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
 
 # Tests
-enable_testing()
-
-set(TEST_SOURCES
-  test/test_game.c
-)
-
-add_executable(${PROJECT_NAME}_test ${TEST_SOURCES})
-target_include_directories(${PROJECT_NAME}_test PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/test
-  ${unity_SOURCE_DIR}/src
-  ${CMAKE_SOURCE_DIR}/src/_gen
-  ${CMAKE_SOURCE_DIR}/src  
-)
-target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME}_lib unity)
-
-add_test(NAME UnitTests COMMAND ${PROJECT_NAME}_test)
+option(ENABLE_TESTS "Build unit tests" OFF)
+if(ENABLE_TESTS)
+  enable_testing()
+  set(TEST_SOURCES
+    test/test_game.c
+  )
+  add_executable(${PROJECT_NAME}_test ${TEST_SOURCES})
+  target_include_directories(${PROJECT_NAME}_test PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/test
+    ${unity_SOURCE_DIR}/src
+    ${CMAKE_SOURCE_DIR}/src/_gen
+    ${CMAKE_SOURCE_DIR}/src
+  )
+  target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME}_lib unity)
+  add_test(NAME UnitTests COMMAND ${PROJECT_NAME}_test)
+endif()
 
 # Assets
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
