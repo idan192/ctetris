@@ -156,3 +156,54 @@ size_t *TetrominoWell_coords(Tetromino const *const t) {
   }
 
   return coords;
+
+}
+
+TetrominoWell *TetrominoWell_init(void) {
+  TetrominoWell *well = calloc(1, sizeof(TetrominoWell));
+  if (!well) {
+    return NULL;
+  }
+
+  well->rows = 0;
+  well->cols = 0;
+  well->coll = TetrominoCollection_init(0);
+  if (!well->coll) {
+    free(well);
+    return NULL;
+  }
+
+  return well;
+}
+
+void TetrominoWell_free(TetrominoWell *t) {
+  if (!t) {
+    return;
+  }
+  TetrominoCollection_free(t->coll);
+  free(t);
+}
+
+GameState *GameState_init(void) {
+  GameState *state = calloc(1, sizeof(GameState));
+  if (!state) {
+    return NULL;
+  }
+
+  state->well = TetrominoWell_init();
+  if (!state->well) {
+    free(state);
+    return NULL;
+  }
+
+  return state;
+}
+
+void GameState_free(GameState *t) {
+  if (!t) {
+    return;
+  }
+
+  TetrominoWell_free(t->well);
+  free(t);
+}
