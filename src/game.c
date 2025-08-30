@@ -68,7 +68,8 @@ Tetromino *Tetromino_init(ETetrominoShape const shape, size_t const row, size_t 
 }
 
 static size_t *_Tetromino_rotated_coords(Tetromino const *const t) {
-  assert(t->deg == 0 || t->deg == 90 || t->deg == 180 || t->deg == 270 && "invalid tetromino rotation");
+  assert((t->deg == 0 || t->deg == 90 || t->deg == 180 || t->deg == 270) &&
+         "invalid tetromino rotation");
 
   size_t *arr = calloc(1, sizeof(size_t) * MINO_COORDS_SIZE);
 
@@ -156,3 +157,4 @@ size_t *TetrominoWell_coords(Tetromino const *const t) {
   }
 
   return coords;
+}
