@@ -156,3 +156,4 @@ size_t *TetrominoWell_coords(Tetromino const *const t) {
   }
 
   return coords;
+}
